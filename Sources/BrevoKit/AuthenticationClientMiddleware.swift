@@ -6,10 +6,14 @@ import OpenAPIRuntime
 package struct AuthenticationMiddleware {
     /// The value for the `Authorization` header field.
     private let value: String
+    private let sandbox: Bool
 
     /// Creates a new middleware.
     /// - Parameter value: The value for the `Authorization` header field.
-    package init(authorizationHeaderFieldValue value: String) { self.value = value }
+    package init(authorizationHeaderFieldValue value: String, sandBox: Bool = false) {
+        self.value = value
+        self.sandbox = sandBox
+    }
 }
 
 extension AuthenticationMiddleware: ClientMiddleware {
@@ -22,7 +26,12 @@ extension AuthenticationMiddleware: ClientMiddleware {
     ) async throws -> (HTTPResponse, HTTPBody?) {
         var request = request
         // Adds the `Authorization` header field with the provided value.
-        request.headerFields[.authorization] = value
+        request.headerFields[.init("api-key") ?? .authorization] = value
+
+        if sandbox {
+            request.headerFields[.init("X-Sib-Sandbox") ?? .authorization] = "drop"
+        }
+
         return try await next(request, body, baseURL)
     }
 }

@@ -22,6 +22,11 @@ Next, in your target, add `BrevoKit` to your dependencies:
 ]),
 ```
 
+## Setup
+
+Get an API key from your Brevo account here: https://app.brevo.com/settings/keys/api
+
+
 ## Development
 
 ```
