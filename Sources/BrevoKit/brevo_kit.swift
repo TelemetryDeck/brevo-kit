@@ -59,8 +59,6 @@ public struct BrevoClient {
             )
         )
 
-
-
         switch response {
         case .created(let created):
             print(created)
@@ -72,6 +70,31 @@ public struct BrevoClient {
             print("Undocumented response with status code \(statusCode): \(undocumentedPayload)")
             print(undocumentedPayload.body)
         }
-
     }
+
+    public func createContact(
+        email: String,
+        externalID: String? = nil,
+        attributes: [String: String]? = nil,
+        listIDs: [Int64]? = nil,
+        updateEnabled: Bool = false
+    ) async throws {
+        try await client.createContact(
+            Operations.CreateContact.Input.init(
+                body: Operations.CreateContact.Input.Body.json(
+                    Components.Schemas.CreateContact.init(
+                        email: email,
+                        extId: externalID,
+                        attributes: nil, // TODO
+                        emailBlacklisted: nil,
+                        smsBlacklisted: nil,
+                        listIds: listIDs,
+                        updateEnabled: updateEnabled,
+                        smtpBlacklistSender: nil
+                    )
+                )
+            )
+        )
+    }
+
 }
