@@ -1,6 +1,10 @@
 # brevo-kit
 Swift Vapor SDK for Brevo
 
+Generated from the [Brevo API OpenAPI specification](https://api.brevo.com/v3/swagger_definition_v3.yml) 
+using [Swift OpenAPI Generator](https://github.com/apple/swift-openapi-generator).
+
+See the [Brevo API docs](https://developers.brevo.com/docs/getting-started) for more information on how to use the API.
 
 ## Installation
 
@@ -18,4 +22,9 @@ Next, in your target, add `BrevoKit` to your dependencies:
 ]),
 ```
 
+## Development
+
+```
+swift package plugin generate-code-from-openapi --target BrevoKit
+```
 
