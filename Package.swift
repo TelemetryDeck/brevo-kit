@@ -9,8 +9,8 @@ let package = Package(
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
-            name: "brevo-kit",
-            targets: ["brevo-kit"]
+            name: "BrevoKit",
+            targets: ["BrevoKit"]
         ),
     ], dependencies: [
         .package(url: "https://github.com/apple/swift-openapi-generator", from: "1.9.0"),
@@ -21,7 +21,7 @@ let package = Package(
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "brevo-kit",
+            name: "BrevoKit",
             dependencies: [
                 .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
                 .product(name: "OpenAPIURLSession", package: "swift-openapi-urlsession"),
@@ -32,7 +32,7 @@ let package = Package(
         ),
         .testTarget(
             name: "brevo-kitTests",
-            dependencies: ["brevo-kit"]
+            dependencies: ["BrevoKit"]
         ),
     ]
 )
