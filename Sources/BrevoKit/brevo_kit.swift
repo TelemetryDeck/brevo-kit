@@ -15,7 +15,7 @@ public struct Brevo {
         Contacts(brevo: self)
     }
 
-    internal let client: Client
+    let client: Client
 
     public init(apiKey: String, sandbox: Bool = false) throws {
         self.client = try Client(

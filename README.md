@@ -28,6 +28,36 @@ Get an API key from your Brevo account here: https://app.brevo.com/settings/keys
 
 TODO: Setup with Vapor. 
 
+## Usage
+
+Init with API Key: 
+
+```swift
+let brevo: Brevo = try Brevo(apiKey: "xkeysib-...", sandbox: false)
+```
+
+Send an email with defined content: 
+
+```swift
+try await brevo.email.send(
+    from: .init(email: "root@eruditorium.org", name: "Enoch Root"),
+    to: [.init(email: "hello@example.com")],
+    subject: "Hello World",
+    htmlContent: nil,
+    textContent: "Hello World!"
+)
+```
+
+Send an email with a template:
+
+```swift
+try await brevo.email.send(
+    to: [.init(email: "hello@example.com")],
+    templateID: 1,
+    parameters: ["name": "Daniel"],
+    tags: ["test", "brevo-kit"]
+)
+```
 
 ## Development
 
