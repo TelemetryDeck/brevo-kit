@@ -2,63 +2,6 @@ import Foundation
 import Logging
 import OpenAPIRuntime
 
-public struct SenderEmail {
-    public let email: String
-    public let name: String?
-    public let id: Int64?
-
-    public init(email: String, name: String? = nil, id: Int64? = nil) {
-        self.email = email
-        self.name = name
-        self.id = id
-    }
-
-    var toSenderPayload: Components.Schemas.SendSmtpEmail.SenderPayload {
-        Components.Schemas.SendSmtpEmail.SenderPayload(
-            name: name, email: email,
-            id: id
-        )
-    }
-}
-
-public struct RecipientEmail {
-    public let email: String
-    public let name: String?
-
-    public init(email: String, name: String? = nil) {
-        self.email = email
-        self.name = name
-    }
-
-    var toRecipientPayload: Components.Schemas.SendSmtpEmail.ToPayloadPayload {
-        Components.Schemas.SendSmtpEmail.ToPayloadPayload(
-            email: email,
-            name: name
-        )
-    }
-}
-
-public struct ReplyToEmail {
-    public let email: String
-    public let name: String?
-
-    public init(email: String, name: String? = nil) {
-        self.email = email
-        self.name = name
-    }
-
-    var toReplyToPayload: Components.Schemas.SendSmtpEmail.ReplyToPayload {
-        Components.Schemas.SendSmtpEmail.ReplyToPayload(
-            email: email,
-            name: name
-        )
-    }
-}
-
-public enum BrevoError: Error {
-    case badRequest
-    case unknownResponse
-}
 
 public struct Email {
     private let brevo: Brevo

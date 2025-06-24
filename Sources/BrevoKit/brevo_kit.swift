@@ -16,6 +16,10 @@ public struct Brevo {
         Contacts(brevo: self)
     }
 
+    public var events: Events {
+        Events(brevo: self)
+    }
+
     let client: Client
     let logger = Logger(label: "com.telemetrydeck.brevo-kit")
 
