@@ -26,15 +26,15 @@ Next, in your target, add `BrevoKit` to your dependencies:
 
 Get an API key from your Brevo account here: https://app.brevo.com/settings/keys/api
 
-TODO: Setup with Vapor. 
-
-## Usage
-
 Init with API Key: 
 
 ```swift
 let brevo: Brevo = try Brevo(apiKey: "xkeysib-...", sandbox: false)
 ```
+
+TODO: Setup with Vapor. 
+
+## Usage
 
 Send an email with defined content: 
 

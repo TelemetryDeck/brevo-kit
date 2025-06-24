@@ -1,5 +1,6 @@
 import Foundation
 import OpenAPIURLSession
+import Logging
 
 func test() async throws {
     let client = try Client(serverURL: Servers.Server1.url(), transport: URLSessionTransport())
@@ -16,6 +17,7 @@ public struct Brevo {
     }
 
     let client: Client
+    let logger = Logger(label: "com.telemetrydeck.brevo-kit")
 
     public init(apiKey: String, sandbox: Bool = false) throws {
         self.client = try Client(
