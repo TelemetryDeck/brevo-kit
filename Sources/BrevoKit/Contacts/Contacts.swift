@@ -25,7 +25,7 @@ public struct Contacts {
     public func create(
         email: String,
         externalID: String? = nil,
-        attributes: [String: String]? = nil,
+        attributes: [String: PrimitiveValue]? = nil,
         emailBlacklisted: Bool = false,
         smsBlacklisted: Bool = false,
         listIDs: [Int64]? = nil,
@@ -33,7 +33,18 @@ public struct Contacts {
     ) async throws {
         var attrs: [String: Components.Schemas.CreateContact.AttributesPayload.AdditionalPropertiesPayload] = [:]
         for (attr, value) in attributes ?? [:] {
-            attrs[attr.uppercased()] = .case2(value)
+            switch value {
+            case .double(let castValue):
+                attrs[attr.uppercased()] = .case1(castValue)
+            case .string(let castValue):
+                attrs[attr.uppercased()] = .case2(castValue)
+            case .bool(let castValue):
+                attrs[attr.uppercased()] = .case3(castValue)
+            case .int(let castValue):
+                attrs[attr.uppercased()] = .case1(Double(castValue))
+            case .stringArray(let castValue):
+                attrs[attr.uppercased()] = .case4(castValue)
+            }
         }
 
         let response = try await brevo.client.createContact(
