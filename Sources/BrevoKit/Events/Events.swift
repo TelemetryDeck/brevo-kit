@@ -26,7 +26,7 @@ public struct Events {
         phoneID: String? = nil,
         whatsappID: String? = nil,
         landlineNumberID: String? = nil,
-        extID: String? = nil,
+        extID: String? = nil
         // contactProperties: [String: PrimitiveValue]? = nil, // Not implemented
         // eventProperties: [String: PrimitiveValue]? = nil, // Not implemented
     ) async throws {
