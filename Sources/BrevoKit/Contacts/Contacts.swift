@@ -75,4 +75,35 @@ public struct Contacts {
             return
         }
     }
+
+    public func getContact(email identifier: String) async throws -> ContactDetails {
+        return try await getContact(identifier: identifier, identifierType: .emailId)
+    }
+
+    public func getContact(externalID identifier: String) async throws -> ContactDetails {
+        return try await getContact(identifier: identifier, identifierType: .extId)
+    }
+
+    private func getContact(identifier: String, identifierType: Operations.GetContactInfo.Input.Query.IdentifierTypePayload) async throws -> ContactDetails {
+        let response = try await brevo.client.getContactInfo(
+            path: .init(identifier: .case1(identifier)),
+            query: .init(identifierType: identifierType)
+        )
+
+        switch response {
+        case .ok(let ok):
+            switch ok.body {
+            case .json(let getExtendedContactDetails):
+                return ContactDetails(contactDetails: getExtendedContactDetails.value1)
+            }
+        case .badRequest(let badRequest):
+            brevo.logger.error("Bad request: \(badRequest)")
+            throw BrevoError.badRequest
+        case .notFound(let notFound):
+            throw BrevoError.notFound
+        case .undocumented(let statusCode, let undocumentedPayload):
+            brevo.logger.error("Undocumented response with status code \(statusCode): \(undocumentedPayload)")
+            throw BrevoError.unknownResponse
+        }
+    }
 }

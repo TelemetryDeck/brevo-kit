@@ -3,6 +3,7 @@ import Foundation
 public enum BrevoError: Error {
     case badRequest
     case unknownResponse
+    case notFound
 }
 
 public extension DecodingError {

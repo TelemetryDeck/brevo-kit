@@ -52,6 +52,8 @@ public struct ReplyToEmail {
     }
 }
 
+public typealias ObjectContainer = [String: PrimitiveValue]
+
 public enum PrimitiveValue: Codable, Hashable, Sendable {
     case double(Double)
     case string(String)

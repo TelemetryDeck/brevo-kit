@@ -1,11 +1,6 @@
 import Foundation
-import OpenAPIURLSession
 import Logging
-
-func test() async throws {
-    let client = try Client(serverURL: Servers.Server1.url(), transport: URLSessionTransport())
-    let response = try await client.getProcess(.init(path: .init(processId: 39)))
-}
+import OpenAPIURLSession
 
 public struct Brevo {
     public var email: Email {
