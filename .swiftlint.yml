@@ -20,10 +20,8 @@ opt_in_rules: # some rules are turned off by default, so you need to opt-in
 
 # included: # paths to include during linting. `--path` is ignored if present.
 #   - telemetry
-# excluded: # paths to ignore during linting. Takes precedence over `included`.
-#   - DataTransferObjects
-#   - telemetry/Sources/App/Templating
-#   - telemetry/.build
+excluded: # paths to ignore during linting. Takes precedence over `included`.
+  - Sources/GeneratedSources
 analyzer_rules: # Rules run by `swiftlint analyze`
   - explicit_self
 
