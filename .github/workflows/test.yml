@@ -1,0 +1,34 @@
+name: Run Tests
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: [self-hosted, macOS]
+    name: Build and run tests
+    needs: lint
+
+    steps:
+      - name: Check out Source
+        uses: actions/checkout@v4
+        with:
+          submodules: "true"
+      - name: test
+        run: swift test
+  lint:
+    runs-on: [self-hosted, macOS]
+    name: Run Swiftlint
+
+    steps:
+      - name: Check out Source
+        uses: actions/checkout@v4
+        with:
+          submodules: "true"
+      - name: Swiftlint
+        run: /opt/homebrew/bin/swiftlint
