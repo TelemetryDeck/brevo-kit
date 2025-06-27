@@ -10,7 +10,7 @@ public struct ContactDetails: Codable {
         createdAt: String,
         modifiedAt: String,
         listIds: [Int64],
-        listUnsubscribed: [Int64]? = nil,
+        listUnsubscribed: [Int64]? = nil
     ) {
         self.email = email
         self.id = id
