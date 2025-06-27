@@ -1,7 +1,6 @@
 import Foundation
 import OpenAPIRuntime
 
-
 public struct Email {
     private let brevo: Brevo
 
