@@ -80,15 +80,15 @@ public struct Contacts {
 
     // swiftlint:enable inclusive_language
 
-    public func getContact(email identifier: String) async throws -> ContactDetails {
+    public func getContact(email identifier: String) async throws -> ContactDetails? {
         return try await getContact(identifier: identifier, identifierType: .emailId)
     }
 
-    public func getContact(externalID identifier: String) async throws -> ContactDetails {
+    public func getContact(externalID identifier: String) async throws -> ContactDetails? {
         return try await getContact(identifier: identifier, identifierType: .extId)
     }
 
-    private func getContact(identifier: String, identifierType: Operations.GetContactInfo.Input.Query.IdentifierTypePayload) async throws -> ContactDetails {
+    private func getContact(identifier: String, identifierType: Operations.GetContactInfo.Input.Query.IdentifierTypePayload) async throws -> ContactDetails? {
         let response = try await brevo.client.getContactInfo(
             path: .init(identifier: .case1(identifier)),
             query: .init(identifierType: identifierType)
@@ -104,7 +104,7 @@ public struct Contacts {
             brevo.logger.error("Bad request: \(badRequest)")
             throw BrevoError.badRequest
         case .notFound(let notFound):
-            throw BrevoError.notFound
+            return nil
         case .undocumented(let statusCode, let undocumentedPayload):
             brevo.logger.error("Undocumented response with status code \(statusCode): \(undocumentedPayload)")
             throw BrevoError.unknownResponse
