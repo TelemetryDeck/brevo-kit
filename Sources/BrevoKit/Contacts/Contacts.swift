@@ -5,6 +5,8 @@ public struct Contacts {
         self.brevo = brevo
     }
 
+    // swiftlint:disable inclusive_language
+
     /// Creates new contacts on Brevo.
     ///
     /// Contacts can be created by passing either -
@@ -75,6 +77,8 @@ public struct Contacts {
             return
         }
     }
+
+    // swiftlint:enable inclusive_language
 
     public func getContact(email identifier: String) async throws -> ContactDetails {
         return try await getContact(identifier: identifier, identifierType: .emailId)

@@ -1,4 +1,5 @@
-
+// The term 'blacklist' is not inclusive, but we're keeping it for naming consistency with the Brevo API.
+// swiftlint:disable inclusive_language
 
 public struct ContactDetails: Codable {
     public init(
@@ -47,6 +48,8 @@ public struct ContactDetails: Codable {
     public var listIds: [Swift.Int64]
     public var listUnsubscribed: [Swift.Int64]?
 }
+
+// swiftlint:enable inclusive_language
 
 public struct ContactStatistics: Codable {
     public init(
@@ -133,10 +136,10 @@ public struct CampaignEvent: Codable {
     }
 
     /// ID of the campaign which generated the event
-    public var campaignId: Swift.Int64? = nil
+    public var campaignId: Swift.Int64?
     /// UTC date-time of the event
     public var eventTime: Swift.String
 
-    public var count: Swift.Int64? = nil
-    public var url: Swift.String? = nil
+    public var count: Swift.Int64?
+    public var url: Swift.String?
 }

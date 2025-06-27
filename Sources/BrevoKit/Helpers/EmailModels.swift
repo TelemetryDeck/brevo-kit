@@ -1,4 +1,3 @@
-
 public struct SenderEmail {
     public let email: String
     public let name: String?
