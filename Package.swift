@@ -9,12 +9,14 @@ let package = Package(
     products: [.library(name: "BrevoKit", targets: ["BrevoKit"])],
     dependencies: [
         .package(url: "https://github.com/apple/swift-openapi-urlsession", from: "1.1.0"),
+        .package(url: "https://github.com/apple/swift-log.git", from: "1.0.0"),
     ],
     targets: [
         .target(
             name: "BrevoKit",
             dependencies: [
                 .product(name: "OpenAPIURLSession", package: "swift-openapi-urlsession"),
+                .product(name: "Logging", package: "swift-log")
             ]
         ),
         .testTarget(
