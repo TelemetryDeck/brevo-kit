@@ -16,7 +16,7 @@ let package = Package(
             name: "BrevoKit",
             dependencies: [
                 .product(name: "OpenAPIURLSession", package: "swift-openapi-urlsession"),
-                .product(name: "Logging", package: "swift-log"),
+                .product(name: "Logging", package: "swift-log")
             ],
             exclude: ["Resources/TODO.md"],
         ),
