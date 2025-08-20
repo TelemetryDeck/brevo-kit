@@ -17,8 +17,7 @@ let package = Package(
             dependencies: [
                 .product(name: "OpenAPIURLSession", package: "swift-openapi-urlsession"),
                 .product(name: "Logging", package: "swift-log")
-            ],
-            exclude: ["Resources/TODO.md"],
+            ]
         ),
         .testTarget(
             name: "brevo-kitTests",
