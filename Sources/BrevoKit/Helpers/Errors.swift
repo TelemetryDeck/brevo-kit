@@ -4,6 +4,7 @@ public enum BrevoError: Error {
     case badRequest
     case unknownResponse
     case notFound
+    case methodNotAllowed
 }
 
 public extension DecodingError {

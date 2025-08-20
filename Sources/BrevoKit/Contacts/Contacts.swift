@@ -103,8 +103,42 @@ public struct Contacts {
         case .badRequest(let badRequest):
             brevo.logger.error("Bad request: \(badRequest)")
             throw BrevoError.badRequest
-        case .notFound(let notFound):
+        case .notFound:
             return nil
+        case .undocumented(let statusCode, let undocumentedPayload):
+            brevo.logger.error("Undocumented response with status code \(statusCode): \(undocumentedPayload)")
+            throw BrevoError.unknownResponse
+        }
+    }
+
+    public func deleteContact(email identifier: String) async throws {
+        try await deleteContact(identifier: identifier, identifierType: .emailId)
+    }
+
+    public func deleteContact(externalID identifier: String) async throws {
+        try await deleteContact(identifier: identifier, identifierType: .extId)
+    }
+
+    private func deleteContact(identifier: String, identifierType: Operations.DeleteContact.Input.Query.IdentifierTypePayload) async throws {
+        let response = try await brevo.client.deleteContact(
+            .init(
+                path: Operations.DeleteContact.Input.Path(identifier: .case1(identifier)),
+                query: Operations.DeleteContact.Input.Query(identifierType: identifierType)
+            )
+        )
+
+        switch response {
+        case .noContent:
+            brevo.logger.info("Deleted contact with identifier \(identifier)")
+        case .badRequest(let badRequest):
+            brevo.logger.error("Bad request: \(badRequest)")
+            throw BrevoError.badRequest
+        case .notFound:
+            brevo.logger.warning("Contact with identifier \(identifier) not found")
+            throw BrevoError.notFound
+        case .methodNotAllowed(let methodNotAllowed):
+            brevo.logger.error("Method not allowed: \(methodNotAllowed)")
+            throw BrevoError.methodNotAllowed
         case .undocumented(let statusCode, let undocumentedPayload):
             brevo.logger.error("Undocumented response with status code \(statusCode): \(undocumentedPayload)")
             throw BrevoError.unknownResponse
