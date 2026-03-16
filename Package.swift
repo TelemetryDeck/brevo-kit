@@ -8,7 +8,7 @@ let package = Package(
     platforms: [.macOS(.v10_15), .macCatalyst(.v13), .iOS(.v13), .tvOS(.v13), .watchOS(.v6), .visionOS(.v1)],
     products: [.library(name: "BrevoKit", targets: ["BrevoKit"])],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-openapi-urlsession", from: "1.1.0"),
+        .package(url: "https://github.com/apple/swift-openapi-urlsession.git", from: "1.1.0"),
         .package(url: "https://github.com/apple/swift-log.git", from: "1.0.0"),
     ],
     targets: [
@@ -20,7 +20,7 @@ let package = Package(
             ]
         ),
         .testTarget(
-            name: "brevo-kitTests",
+            name: "BrevoKitTests",
             dependencies: ["BrevoKit"]
         ),
     ]
