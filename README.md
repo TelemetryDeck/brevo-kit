@@ -62,11 +62,10 @@ try await brevo.email.send(
 ## Development
 
 To update the generated code from the OpenAPI specification, you can use the generate-code-from-openapi plugin 
-provided by Apple. Download a new version of the 
-[Brevo API OpenAPI specification](https://api.brevo.com/v3/swagger_definition_v3.yml), place it into `openapi.yml`, 
-and run the following command:
+provided by Apple, take these steps:
 
-```
-swift package plugin generate-code-from-openapi --target BrevoKit
-```
+1. Download a new version of the  [Brevo API OpenAPI specification](https://api.brevo.com/v3/swagger_definition_v3.yml), place it into `openapi.yml`
+2. Uncomment the `swift-openapi-generator` package dependency in `Package.swift`
+3. Run `swift package plugin generate-code-from-openapi --target BrevoKit`
 
+If an error occurs, try deleting the `.build` directory.
