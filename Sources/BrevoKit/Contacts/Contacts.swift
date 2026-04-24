@@ -33,7 +33,7 @@ public struct Contacts {
         listIDs: [Int64]? = nil,
         updateEnabled: Bool = false
     ) async throws {
-        var attrs: [String: Components.Schemas.CreateContact.AttributesPayload.AdditionalPropertiesPayload] = [:]
+        var attrs: [String: Operations.CreateContact.Input.Body.JsonPayload.AttributesPayload.AdditionalPropertiesPayload] = [:]
         for (attr, value) in attributes ?? [:] {
             switch value {
             case .double(let castValue):
@@ -52,15 +52,14 @@ public struct Contacts {
         let response = try await brevo.client.createContact(
             Operations.CreateContact.Input(
                 body: Operations.CreateContact.Input.Body.json(
-                    Components.Schemas.CreateContact(
+                    Operations.CreateContact.Input.Body.JsonPayload(
+                        attributes: attributes != nil ? Operations.CreateContact.Input.Body.JsonPayload.AttributesPayload(additionalProperties: attrs) : nil,
                         email: email,
-                        extId: externalID,
-                        attributes: attributes != nil ? Components.Schemas.CreateContact.AttributesPayload(additionalProperties: attrs) : nil,
                         emailBlacklisted: emailBlacklisted,
-                        smsBlacklisted: smsBlacklisted,
+                        extId: externalID,
                         listIds: listIDs,
-                        updateEnabled: updateEnabled,
-                        smtpBlacklistSender: nil
+                        smsBlacklisted: smsBlacklisted,
+                        updateEnabled: updateEnabled
                     )
                 )
             )
