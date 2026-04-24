@@ -88,49 +88,49 @@ public struct CampaignEvent: Codable {
         self.eventTime = eventTime
     }
 
-    init(_ payload: Components.Schemas.GetExtendedContactDetails.Value2Payload.StatisticsPayload.MessagesSentPayloadPayload) {
+    init(_ payload: Operations.GetContactInfo.Output.Ok.Body.JsonPayload.Value2Payload.StatisticsPayload.MessagesSentPayloadPayload) {
         self.campaignId = payload.campaignId
         self.eventTime = payload.eventTime
     }
 
-    init(_ payload: Components.Schemas.GetExtendedContactDetails.Value2Payload.StatisticsPayload.HardBouncesPayloadPayload) {
+    init(_ payload: Operations.GetContactInfo.Output.Ok.Body.JsonPayload.Value2Payload.StatisticsPayload.HardBouncesPayloadPayload) {
         self.campaignId = payload.campaignId
         self.eventTime = payload.eventTime
     }
 
-    init(_ payload: Components.Schemas.GetExtendedContactDetails.Value2Payload.StatisticsPayload.SoftBouncesPayloadPayload) {
+    init(_ payload: Operations.GetContactInfo.Output.Ok.Body.JsonPayload.Value2Payload.StatisticsPayload.SoftBouncesPayloadPayload) {
         self.campaignId = payload.campaignId
         self.eventTime = payload.eventTime
     }
 
-    init(_ payload: Components.Schemas.GetExtendedContactDetails.Value2Payload.StatisticsPayload.ComplaintsPayloadPayload) {
+    init(_ payload: Operations.GetContactInfo.Output.Ok.Body.JsonPayload.Value2Payload.StatisticsPayload.ComplaintsPayloadPayload) {
         self.campaignId = payload.campaignId
         self.eventTime = payload.eventTime
     }
 
-    init(_ payload: Components.Schemas.GetExtendedContactDetails.Value2Payload.StatisticsPayload.UnsubscriptionsPayload.UserUnsubscriptionPayloadPayload) {
+    init(_ payload: Operations.GetContactInfo.Output.Ok.Body.JsonPayload.Value2Payload.StatisticsPayload.UnsubscriptionsPayload.UserUnsubscriptionPayloadPayload) {
         self.campaignId = payload.campaignId
         self.eventTime = payload.eventTime
     }
 
-    init(_ payload: Components.Schemas.GetExtendedContactDetails.Value2Payload.StatisticsPayload.UnsubscriptionsPayload.AdminUnsubscriptionPayloadPayload) {
+    init(_ payload: Operations.GetContactInfo.Output.Ok.Body.JsonPayload.Value2Payload.StatisticsPayload.UnsubscriptionsPayload.AdminUnsubscriptionPayloadPayload) {
         self.campaignId = nil
         self.eventTime = payload.eventTime
     }
 
-    init(_ payload: Components.Schemas.GetExtendedContactDetails.Value2Payload.StatisticsPayload.OpenedPayloadPayload) {
+    init(_ payload: Operations.GetContactInfo.Output.Ok.Body.JsonPayload.Value2Payload.StatisticsPayload.OpenedPayloadPayload) {
         self.campaignId = payload.campaignId
         self.eventTime = payload.eventTime
         self.count = payload.count
     }
 
-    init(_ payload: Components.Schemas.GetExtendedContactDetails.Value2Payload.StatisticsPayload.ClickedPayloadPayload.LinksPayloadPayload) {
+    init(_ payload: Operations.GetContactInfo.Output.Ok.Body.JsonPayload.Value2Payload.StatisticsPayload.ClickedPayloadPayload.LinksPayloadPayload) {
         self.eventTime = payload.eventTime
         self.count = payload.count
         self.url = payload.url
     }
 
-    init(_ payload: Components.Schemas.GetExtendedContactDetails.Value2Payload.StatisticsPayload.DeliveredPayloadPayload) {
+    init(_ payload: Operations.GetContactInfo.Output.Ok.Body.JsonPayload.Value2Payload.StatisticsPayload.DeliveredPayloadPayload) {
         self.eventTime = payload.eventTime
         self.campaignId = payload.campaignId
     }

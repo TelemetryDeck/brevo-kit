@@ -9,10 +9,11 @@ public struct SenderEmail {
         self.id = id
     }
 
-    var toSenderPayload: Components.Schemas.SendSmtpEmail.SenderPayload {
-        Components.Schemas.SendSmtpEmail.SenderPayload(
-            name: name, email: email,
-            id: id
+    var toSenderPayload: Operations.SendTransacEmail.Input.Body.JsonPayload.SenderPayload {
+        Operations.SendTransacEmail.Input.Body.JsonPayload.SenderPayload(
+            email: email,
+            id: id,
+            name: name
         )
     }
 }
@@ -26,8 +27,8 @@ public struct RecipientEmail {
         self.name = name
     }
 
-    var toRecipientPayload: Components.Schemas.SendSmtpEmail.ToPayloadPayload {
-        Components.Schemas.SendSmtpEmail.ToPayloadPayload(
+    var toRecipientPayload: Operations.SendTransacEmail.Input.Body.JsonPayload.ToPayloadPayload {
+        Operations.SendTransacEmail.Input.Body.JsonPayload.ToPayloadPayload(
             email: email,
             name: name
         )
@@ -43,8 +44,8 @@ public struct ReplyToEmail {
         self.name = name
     }
 
-    var toReplyToPayload: Components.Schemas.SendSmtpEmail.ReplyToPayload {
-        Components.Schemas.SendSmtpEmail.ReplyToPayload(
+    var toReplyToPayload: Operations.SendTransacEmail.Input.Body.JsonPayload.ReplyToPayload {
+        Operations.SendTransacEmail.Input.Body.JsonPayload.ReplyToPayload(
             email: email,
             name: name
         )

@@ -44,18 +44,18 @@ public struct Email {
         let response = try await brevo.client.sendTransacEmail(
             Operations.SendTransacEmail.Input(
                 body: Operations.SendTransacEmail.Input.Body.json(
-                    Components.Schemas.SendSmtpEmail(
-                        sender: sender?.toSenderPayload,
-                        to: recipients.map { $0.toRecipientPayload },
+                    Operations.SendTransacEmail.Input.Body.JsonPayload(
+                        batchId: batchID,
                         htmlContent: htmlContent,
-                        textContent: textContent,
-                        subject: subject,
+                        params: parameters != nil ? Operations.SendTransacEmail.Input.Body.JsonPayload.ParamsPayload(additionalProperties: params) : nil,
                         replyTo: replyTo?.toReplyToPayload,
-                        templateId: templateID,
-                        params: parameters != nil ? Components.Schemas.SendSmtpEmail.ParamsPayload(additionalProperties: params) : nil,
-                        tags: tags,
                         scheduledAt: scheduledAt,
-                        batchId: batchID
+                        sender: sender?.toSenderPayload,
+                        subject: subject,
+                        tags: tags,
+                        templateId: templateID,
+                        textContent: textContent,
+                        to: recipients.map { $0.toRecipientPayload }
                     )
                 )
             )

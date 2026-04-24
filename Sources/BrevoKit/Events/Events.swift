@@ -13,7 +13,7 @@ public struct Events {
     ///
     /// - Parameters:
     ///   - eventName: The name of the event that occurred. This is how you will find your event in Brevo. Limited to 255 characters, alphanumerical characters and - _ only.
-    ///   - eventDate: Timestamp of when the event occurred (e.g. "2024-01-24T17:39:57+01:00"). If no value is passed, the timestamp of the event creation is used.
+    ///   - eventDate: Timestamp of when the event occurred. If no value is passed, the timestamp of the event creation is used.
     ///   - emailID: Identifies the contact by email address
     ///   - phoneID: Identifies the contact by phone number
     ///   - whatsappID: Identifies the contact by WhatsApp number
@@ -21,7 +21,7 @@ public struct Events {
     ///   - extID: Identifies the contact by external ID
     public func create(
         eventName: String,
-        eventDate: String? = nil,
+        eventDate: Date? = nil,
         emailID: String? = nil,
         phoneID: String? = nil,
         whatsappID: String? = nil,
@@ -30,23 +30,21 @@ public struct Events {
         // contactProperties: [String: PrimitiveValue]? = nil, // Not implemented
         // eventProperties: [String: PrimitiveValue]? = nil, // Not implemented
     ) async throws {
-        var eventProperties: [String: Components.Schemas.Event.EventPropertiesPayload.AdditionalPropertiesPayload] = [:]
-
         let response = try await brevo.client.createEvent(
             Operations.CreateEvent.Input(
                 body: Operations.CreateEvent.Input.Body.json(
                     .init(
-                        eventName: eventName,
-                        eventDate: eventDate,
-                        identifiers: Components.Schemas.Event.IdentifiersPayload(
-                            emailId: emailID,
-                            phoneId: phoneID,
-                            whatsappId: whatsappID,
-                            landlineNumberId: landlineNumberID,
-                            extId: extID
-                        ),
                         contactProperties: nil, // Not implemented
-                        eventProperties: nil // Not implemented
+                        eventDate: eventDate,
+                        eventName: eventName,
+                        eventProperties: nil, // Not implemented
+                        identifiers: Operations.CreateEvent.Input.Body.JsonPayload.IdentifiersPayload(
+                            emailId: emailID,
+                            extId: extID,
+                            landlineNumberId: landlineNumberID,
+                            phoneId: phoneID,
+                            whatsappId: whatsappID
+                        )
                     )
                 )
             )
