@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Check out Source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: "true"
       - name: test
@@ -27,7 +27,7 @@ jobs:
 
     steps:
       - name: Check out Source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: "true"
       - name: Swiftlint
