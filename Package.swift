@@ -17,6 +17,11 @@ let package = Package(
             dependencies: [
                 .product(name: "OpenAPIURLSession", package: "swift-openapi-urlsession"),
                 .product(name: "Logging", package: "swift-log")
+            ],
+            exclude: [
+                // Files used by Swift OpenAPI generator to generate sources, but not needed for compilation
+                "openapi.yaml",
+                "openapi-generator-config.yaml",
             ]
         ),
         .testTarget(
