@@ -1,4 +1,5 @@
 import Foundation
+import Tracing
 
 public struct Events {
     private let brevo: Brevo
@@ -30,35 +31,39 @@ public struct Events {
         // contactProperties: [String: PrimitiveValue]? = nil, // Not implemented
         // eventProperties: [String: PrimitiveValue]? = nil, // Not implemented
     ) async throws {
-        let response = try await brevo.client.createEvent(
-            Operations.CreateEvent.Input(
-                body: Operations.CreateEvent.Input.Body.json(
-                    .init(
-                        contactProperties: nil, // Not implemented
-                        eventDate: eventDate,
-                        eventName: eventName,
-                        eventProperties: nil, // Not implemented
-                        identifiers: Operations.CreateEvent.Input.Body.JsonPayload.IdentifiersPayload(
-                            emailId: emailID,
-                            extId: extID,
-                            landlineNumberId: landlineNumberID,
-                            phoneId: phoneID,
-                            whatsappId: whatsappID
+        try await withSpan("brevo.events.create", ofKind: .client) { span in
+            span.attributes["brevo.event.name"] = eventName
+
+            let response = try await brevo.client.createEvent(
+                Operations.CreateEvent.Input(
+                    body: Operations.CreateEvent.Input.Body.json(
+                        .init(
+                            contactProperties: nil, // Not implemented
+                            eventDate: eventDate,
+                            eventName: eventName,
+                            eventProperties: nil, // Not implemented
+                            identifiers: Operations.CreateEvent.Input.Body.JsonPayload.IdentifiersPayload(
+                                emailId: emailID,
+                                extId: extID,
+                                landlineNumberId: landlineNumberID,
+                                phoneId: phoneID,
+                                whatsappId: whatsappID
+                            )
                         )
                     )
                 )
             )
-        )
 
-        switch response {
-        case .badRequest(let badRequest):
-            brevo.logger.error("Bad request: \(badRequest)")
-            throw BrevoError.badRequest
-        case .undocumented(let statusCode, let undocumentedPayload):
-            brevo.logger.error("Undocumented response with status code \(statusCode): \(undocumentedPayload)")
-            throw BrevoError.unknownResponse
-        default:
-            return
+            switch response {
+            case .badRequest(let badRequest):
+                brevo.logger.error("Bad request: \(badRequest)")
+                throw BrevoError.badRequest
+            case .undocumented(let statusCode, let undocumentedPayload):
+                brevo.logger.error("Undocumented response with status code \(statusCode): \(undocumentedPayload)")
+                throw BrevoError.unknownResponse
+            default:
+                return
+            }
         }
     }
 }

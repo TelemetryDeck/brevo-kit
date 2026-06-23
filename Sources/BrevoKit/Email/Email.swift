@@ -1,5 +1,6 @@
 import Foundation
 import OpenAPIRuntime
+import Tracing
 
 public struct Email {
     private let brevo: Brevo
@@ -36,40 +37,48 @@ public struct Email {
         scheduledAt: Date? = nil,
         batchID: String? = nil
     ) async throws {
-        var params: [String: OpenAPIRuntime.OpenAPIValueContainer] = [:]
-        for (parameter, value) in parameters ?? [:] {
-            params[parameter] = .init(stringLiteral: value)
-        }
+        try await withSpan("brevo.email.send", ofKind: .client) { span in
+            span.attributes["brevo.email.recipient_count"] = recipients.count
+            if let templateID {
+                span.attributes["brevo.email.template_id"] = Int(templateID)
+            }
+            span.attributes["brevo.email.scheduled"] = scheduledAt != nil
 
-        let response = try await brevo.client.sendTransacEmail(
-            Operations.SendTransacEmail.Input(
-                body: Operations.SendTransacEmail.Input.Body.json(
-                    Operations.SendTransacEmail.Input.Body.JsonPayload(
-                        batchId: batchID,
-                        htmlContent: htmlContent,
-                        params: parameters != nil ? Operations.SendTransacEmail.Input.Body.JsonPayload.ParamsPayload(additionalProperties: params) : nil,
-                        replyTo: replyTo?.toReplyToPayload,
-                        scheduledAt: scheduledAt,
-                        sender: sender?.toSenderPayload,
-                        subject: subject,
-                        tags: tags,
-                        templateId: templateID,
-                        textContent: textContent,
-                        to: recipients.map { $0.toRecipientPayload }
+            var params: [String: OpenAPIRuntime.OpenAPIValueContainer] = [:]
+            for (parameter, value) in parameters ?? [:] {
+                params[parameter] = .init(stringLiteral: value)
+            }
+
+            let response = try await brevo.client.sendTransacEmail(
+                Operations.SendTransacEmail.Input(
+                    body: Operations.SendTransacEmail.Input.Body.json(
+                        Operations.SendTransacEmail.Input.Body.JsonPayload(
+                            batchId: batchID,
+                            htmlContent: htmlContent,
+                            params: parameters != nil ? Operations.SendTransacEmail.Input.Body.JsonPayload.ParamsPayload(additionalProperties: params) : nil,
+                            replyTo: replyTo?.toReplyToPayload,
+                            scheduledAt: scheduledAt,
+                            sender: sender?.toSenderPayload,
+                            subject: subject,
+                            tags: tags,
+                            templateId: templateID,
+                            textContent: textContent,
+                            to: recipients.map { $0.toRecipientPayload }
+                        )
                     )
                 )
             )
-        )
 
-        switch response {
-        case .badRequest(let badRequest):
-            brevo.logger.error("Bad request: \(badRequest)")
-            throw BrevoError.badRequest
-        case .undocumented(let statusCode, let undocumentedPayload):
-            brevo.logger.error("Undocumented response with status code \(statusCode): \(undocumentedPayload)")
-            throw BrevoError.unknownResponse
-        default:
-            return
+            switch response {
+            case .badRequest(let badRequest):
+                brevo.logger.error("Bad request: \(badRequest)")
+                throw BrevoError.badRequest
+            case .undocumented(let statusCode, let undocumentedPayload):
+                brevo.logger.error("Undocumented response with status code \(statusCode): \(undocumentedPayload)")
+                throw BrevoError.unknownResponse
+            default:
+                return
+            }
         }
     }
 }

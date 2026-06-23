@@ -33,6 +33,8 @@ CI (`.github/workflows/test.yml`) runs `swiftlint` then `swift test` on self-hos
 
 - **Feature wrappers (`Email/`, `Contacts/`, `Events/`)** are the value of this package: they translate clean Swift call sites into the verbose generated request types and collapse the generated response enums into either a return value or a thrown `BrevoError`. New API surface should follow this same pattern rather than exposing generated types directly.
 
+- **Tracing:** wrapper methods that hit the network wrap their body in a `withSpan("brevo.<area>.<op>", ofKind: .client) { span in ... }` from [swift-distributed-tracing](https://github.com/apple/swift-distributed-tracing) (`import Tracing`). Errors thrown inside the closure are auto-recorded by the span, so the existing `throw BrevoError...` paths need no extra handling. Add only non-sensitive `span.attributes[...]` (counts, IDs, identifier type) — never recipient emails or contact identifiers. The dependency is no-op until the host app bootstraps a tracer. For `Contacts`, instrument the private worker methods (where the call happens), not the thin public overloads that delegate, so each operation emits exactly one span.
+
 - **Public model types (`Models/`, `Helpers/EmailModels.swift`, `Contacts/ContactModels.swift`)** are hand-written wrappers (`SenderEmail`, `RecipientEmail`, `ReplyToEmail`, `ContactDetails`, etc.) so callers never touch the generated types. They carry a `toXPayload` computed property (outbound) and/or an `init(...: Components.Schemas...)` (inbound) to bridge across. Note the asymmetry: request bodies are built from per-operation types (`Operations.<Op>.Input.Body.JsonPayload...`), while response decoding uses the shared `Components.Schemas.*` types.
 
 ## Conventions

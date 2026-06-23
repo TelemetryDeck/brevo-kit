@@ -1,3 +1,5 @@
+import Tracing
+
 public struct Contacts {
     private let brevo: Brevo
 
@@ -33,47 +35,51 @@ public struct Contacts {
         listIDs: [Int64]? = nil,
         updateEnabled: Bool = false
     ) async throws {
-        var attrs: [String: Operations.CreateContact.Input.Body.JsonPayload.AttributesPayload.AdditionalPropertiesPayload] = [:]
-        for (attr, value) in attributes ?? [:] {
-            switch value {
-            case .double(let castValue):
-                attrs[attr.uppercased()] = .case1(castValue)
-            case .string(let castValue):
-                attrs[attr.uppercased()] = .case2(castValue)
-            case .bool(let castValue):
-                attrs[attr.uppercased()] = .case3(castValue)
-            case .int(let castValue):
-                attrs[attr.uppercased()] = .case1(Double(castValue))
-            case .stringArray(let castValue):
-                attrs[attr.uppercased()] = .case4(castValue)
-            }
-        }
+        try await withSpan("brevo.contacts.create", ofKind: .client) { span in
+            span.attributes["brevo.contact.update_enabled"] = updateEnabled
 
-        let response = try await brevo.client.createContact(
-            Operations.CreateContact.Input(
-                body: Operations.CreateContact.Input.Body.json(
-                    Operations.CreateContact.Input.Body.JsonPayload(
-                        attributes: attributes != nil ? Operations.CreateContact.Input.Body.JsonPayload.AttributesPayload(additionalProperties: attrs) : nil,
-                        email: email,
-                        emailBlacklisted: emailBlacklisted,
-                        extId: externalID,
-                        listIds: listIDs,
-                        smsBlacklisted: smsBlacklisted,
-                        updateEnabled: updateEnabled
+            var attrs: [String: Operations.CreateContact.Input.Body.JsonPayload.AttributesPayload.AdditionalPropertiesPayload] = [:]
+            for (attr, value) in attributes ?? [:] {
+                switch value {
+                case .double(let castValue):
+                    attrs[attr.uppercased()] = .case1(castValue)
+                case .string(let castValue):
+                    attrs[attr.uppercased()] = .case2(castValue)
+                case .bool(let castValue):
+                    attrs[attr.uppercased()] = .case3(castValue)
+                case .int(let castValue):
+                    attrs[attr.uppercased()] = .case1(Double(castValue))
+                case .stringArray(let castValue):
+                    attrs[attr.uppercased()] = .case4(castValue)
+                }
+            }
+
+            let response = try await brevo.client.createContact(
+                Operations.CreateContact.Input(
+                    body: Operations.CreateContact.Input.Body.json(
+                        Operations.CreateContact.Input.Body.JsonPayload(
+                            attributes: attributes != nil ? Operations.CreateContact.Input.Body.JsonPayload.AttributesPayload(additionalProperties: attrs) : nil,
+                            email: email,
+                            emailBlacklisted: emailBlacklisted,
+                            extId: externalID,
+                            listIds: listIDs,
+                            smsBlacklisted: smsBlacklisted,
+                            updateEnabled: updateEnabled
+                        )
                     )
                 )
             )
-        )
 
-        switch response {
-        case .badRequest(let badRequest):
-            brevo.logger.error("Bad request: \(badRequest)")
-            throw BrevoError.badRequest
-        case .undocumented(let statusCode, let undocumentedPayload):
-            brevo.logger.error("Undocumented response with status code \(statusCode): \(undocumentedPayload)")
-            throw BrevoError.unknownResponse
-        default:
-            return
+            switch response {
+            case .badRequest(let badRequest):
+                brevo.logger.error("Bad request: \(badRequest)")
+                throw BrevoError.badRequest
+            case .undocumented(let statusCode, let undocumentedPayload):
+                brevo.logger.error("Undocumented response with status code \(statusCode): \(undocumentedPayload)")
+                throw BrevoError.unknownResponse
+            default:
+                return
+            }
         }
     }
 
@@ -88,25 +94,29 @@ public struct Contacts {
     }
 
     private func getContact(identifier: String, identifierType: Operations.GetContactInfo.Input.Query.IdentifierTypePayload) async throws -> ContactDetails? {
-        let response = try await brevo.client.getContactInfo(
-            path: .init(identifier: .case1(identifier)),
-            query: .init(identifierType: identifierType)
-        )
+        try await withSpan("brevo.contacts.get", ofKind: .client) { span in
+            span.attributes["brevo.contact.identifier_type"] = "\(identifierType)"
 
-        switch response {
-        case .ok(let ok):
-            switch ok.body {
-            case .json(let getExtendedContactDetails):
-                return ContactDetails(contactDetails: getExtendedContactDetails.value1)
+            let response = try await brevo.client.getContactInfo(
+                path: .init(identifier: .case1(identifier)),
+                query: .init(identifierType: identifierType)
+            )
+
+            switch response {
+            case .ok(let ok):
+                switch ok.body {
+                case .json(let getExtendedContactDetails):
+                    return ContactDetails(contactDetails: getExtendedContactDetails.value1)
+                }
+            case .badRequest(let badRequest):
+                brevo.logger.error("Bad request: \(badRequest)")
+                throw BrevoError.badRequest
+            case .notFound:
+                return nil
+            case .undocumented(let statusCode, let undocumentedPayload):
+                brevo.logger.error("Undocumented response with status code \(statusCode): \(undocumentedPayload)")
+                throw BrevoError.unknownResponse
             }
-        case .badRequest(let badRequest):
-            brevo.logger.error("Bad request: \(badRequest)")
-            throw BrevoError.badRequest
-        case .notFound:
-            return nil
-        case .undocumented(let statusCode, let undocumentedPayload):
-            brevo.logger.error("Undocumented response with status code \(statusCode): \(undocumentedPayload)")
-            throw BrevoError.unknownResponse
         }
     }
 
@@ -119,28 +129,32 @@ public struct Contacts {
     }
 
     private func deleteContact(identifier: String, identifierType: Operations.DeleteContact.Input.Query.IdentifierTypePayload) async throws {
-        let response = try await brevo.client.deleteContact(
-            .init(
-                path: Operations.DeleteContact.Input.Path(identifier: .case1(identifier)),
-                query: Operations.DeleteContact.Input.Query(identifierType: identifierType)
-            )
-        )
+        try await withSpan("brevo.contacts.delete", ofKind: .client) { span in
+            span.attributes["brevo.contact.identifier_type"] = "\(identifierType)"
 
-        switch response {
-        case .noContent:
-            brevo.logger.info("Deleted contact with identifier \(identifier)")
-        case .badRequest(let badRequest):
-            brevo.logger.error("Bad request: \(badRequest)")
-            throw BrevoError.badRequest
-        case .notFound:
-            brevo.logger.warning("Contact with identifier \(identifier) not found")
-            throw BrevoError.notFound
-        case .methodNotAllowed(let methodNotAllowed):
-            brevo.logger.error("Method not allowed: \(methodNotAllowed)")
-            throw BrevoError.methodNotAllowed
-        case .undocumented(let statusCode, let undocumentedPayload):
-            brevo.logger.error("Undocumented response with status code \(statusCode): \(undocumentedPayload)")
-            throw BrevoError.unknownResponse
+            let response = try await brevo.client.deleteContact(
+                .init(
+                    path: Operations.DeleteContact.Input.Path(identifier: .case1(identifier)),
+                    query: Operations.DeleteContact.Input.Query(identifierType: identifierType)
+                )
+            )
+
+            switch response {
+            case .noContent:
+                brevo.logger.info("Deleted contact with identifier \(identifier)")
+            case .badRequest(let badRequest):
+                brevo.logger.error("Bad request: \(badRequest)")
+                throw BrevoError.badRequest
+            case .notFound:
+                brevo.logger.warning("Contact with identifier \(identifier) not found")
+                throw BrevoError.notFound
+            case .methodNotAllowed(let methodNotAllowed):
+                brevo.logger.error("Method not allowed: \(methodNotAllowed)")
+                throw BrevoError.methodNotAllowed
+            case .undocumented(let statusCode, let undocumentedPayload):
+                brevo.logger.error("Undocumented response with status code \(statusCode): \(undocumentedPayload)")
+                throw BrevoError.unknownResponse
+            }
         }
     }
 }

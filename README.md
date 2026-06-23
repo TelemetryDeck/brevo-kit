@@ -59,6 +59,28 @@ try await brevo.email.send(
 )
 ```
 
+## Tracing
+
+`BrevoKit` is instrumented with [swift-distributed-tracing](https://github.com/apple/swift-distributed-tracing).
+Every API call made through `brevo.email`, `brevo.contacts`, and `brevo.events` is wrapped in a client
+span (e.g. `brevo.email.send`, `brevo.contacts.get`, `brevo.events.create`), and thrown errors are recorded
+on the span automatically.
+
+This is **zero-overhead unless you opt in**: until your application bootstraps a tracer, all spans resolve to
+the no-op tracer and nothing is emitted. To collect traces, bootstrap a `Tracer` once at startup, for example
+using [swift-otel](https://github.com/swift-otel/swift-otel):
+
+```swift
+import Tracing
+import OTel
+
+let observability = try OTel.bootstrap()
+// ... your app runs; BrevoKit spans now flow to your OTLP backend
+```
+
+Spans carry non-sensitive attributes only (recipient counts, template IDs, identifier type) — recipient email
+addresses and contact identifiers are intentionally kept out of trace data.
+
 ## Development
 
 To update the generated code from the OpenAPI specification, you can use the generate-code-from-openapi plugin 
